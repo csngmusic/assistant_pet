@@ -1,0 +1,6 @@
+#*.ipynb
+*.bin
+config.py
+files/
+store/
+.venv/
