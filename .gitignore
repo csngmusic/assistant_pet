@@ -4,3 +4,4 @@ config.py
 files/
 store/
 .venv/
+__pycache__/

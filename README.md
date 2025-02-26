@@ -2,3 +2,5 @@
 который будет отвечать на заданные ему вопросы, основываясь на переданной ему литературе.
 
 1. Установить tesseract-OCR версии 5.5.0 (доступен по ссылке: https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.0)
+2. Скачать LLM Llama 2.7b с Hugging face
+3. 
