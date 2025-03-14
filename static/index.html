@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск по методичкам</title>
+</head>
+<body>
+    <h2>Введите вопрос:</h2>
+    <form id="question-form">
+        <input type="text" id="question" name="question" required>
+        <button type="submit">Отправить</button>
+    </form>
+    <h3>Ответ:</h3>
+    <p id="answer"></p>
+
+    <script>
+        document.getElementById("question-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const question = document.getElementById("question").value;
+            
+            const response = await fetch("http://127.0.0.1:8000/search/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: question })
+            });
+
+            const data = await response.json();
+            document.getElementById("answer").innerText = data.answer;
+        });
+    </script>
+</body>
+</html>
