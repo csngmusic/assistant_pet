@@ -1,6 +1,11 @@
-#*.ipynb
+*.ipynb
 *.bin
+*.jpg
+*.png
+*.pem
+
 config.py
+
 files/
 store/
 .venv/

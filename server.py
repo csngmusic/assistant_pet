@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
+from assistant import talk_to_assistant
 
 # Инициализация FastAPI
 app = FastAPI()
@@ -20,9 +21,13 @@ async def serve_homepage():
 
 # API для обработки запросов студентов
 @app.post("/search/")
-async def search_question(query: QueryModel):
-    string = query.question.lower()
-    return {"answer": f"Вы спросили: {string}"}
+async def search_question(query: QueryModel, request: Request):
+    thread_id = request.client.host  # Получаем IP клиента
+    try:
+        answer: str = await talk_to_assistant(thread_id, query.question)
+    except Exception as e:
+        answer = str(e)
+    return {"answer": answer}
 
 # @app.get("/")
 # async def home():

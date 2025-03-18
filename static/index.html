@@ -70,11 +70,13 @@
     <p id="answer"></p>
 
     <script>
+        const apiUrl = `${window.location.protocol}//${window.location.hostname}:8080/search/`;
+        // Ищем адрес сервера, чтобы можно было запустить метод без правок IP
         document.getElementById("question-form").addEventListener("submit", async function(event) {
             event.preventDefault();
             const question = document.getElementById("question").value;
 
-            const response = await fetch("http://127.0.0.1:8000/search/", {
+            const response = await fetch(apiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ question: question })
