@@ -3,6 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мессенджер</title>
+    <link rel="stylesheet" href="static/styles.css"/>
+</head>
+<body>
+
+<div class="messenger">
+    <div class="header">Чат</div>
+    <div class="chat-box" id="chat-box"></div>
+    <div class="input-area">
+        <input type="text" id="message-input" placeholder="Введите сообщение...">
+        <button onclick="sendMessage()">Отправить</button>
+    </div>
+</div>
+
+<script>
+    const apiUrl = `${window.location.protocol}//${window.location.hostname}:8080/search/`;
+
+    async function sendMessage() {
+    const input = document.getElementById("message-input");
+    const chatBox = document.getElementById("chat-box");
+
+    const question = input.value.trim();
+    if (question === "") return;
+
+    input.value = "";
+
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("message", "user");
+    messageElement.innerText = question;
+    chatBox.prepend(messageElement);
+
+    const loading = document.createElement("div");
+    loading.classList.add("message", "bot");
+    loading.innerText = "Ассистент печатает...";
+    chatBox.prepend(loading);
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: question })
+        });
+        const data = await response.json();
+        chatBox.removeChild(loading);
+
+        const botMessage = document.createElement("div");
+        botMessage.classList.add("message", "bot");
+        botMessage.innerText = data.answer || "Ответ пуст.";
+        chatBox.prepend(botMessage);
+    } catch (error) {
+        chatBox.removeChild(loading);
+
+        const errorMessage = document.createElement("div");
+        errorMessage.classList.add("message", "bot");
+        errorMessage.innerText = "Ошибка при получении ответа от сервера.";
+        chatBox.prepend(errorMessage);
+    }
+}
+        
+    // document.getElementById("message-input").addEventListener("submit", function (event) {
+    //     event.preventDefault();
+    //     sendMessage();
+    // });
+</script>
+
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Поиск по методичкам</title>
     <style>
         body {
@@ -87,7 +161,7 @@
         });
     </script>
 </body>
-</html>
+</html> -->
 
 <!-- <!DOCTYPE html>
 <html lang="ru">
