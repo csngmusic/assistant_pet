@@ -17,15 +17,9 @@ async def talk_to_assistant(thread_id: str, data: str):
     # Добавляем сообщение пользователя в историю
     threads[thread_id].append({'role': 'user', 'content': str(data)})
 
-    # Запрашиваем у Ollama ответ с учетом истории
-    try:
-        response = ollama.chat(model='gemma2:9b', messages=[
-            {'role': 'system', 'content': 'Ответь на запрос пользователя'},
-            {'role': 'user', 'content': str(data)}
-        ])
-        return response['message']['content']
-    except Exception as e:
-        return f"Ошибка: {str(e)}"
+    # Запрашиваем у Ollama ответ с учетом всей истории
+    response = ollama.chat(model='gemma2:9b', messages=threads[thread_id])
+
     # Добавляем ответ ассистента в историю
     threads[thread_id].append({'role': 'assistant', 'content': response['message']['content']})
 
