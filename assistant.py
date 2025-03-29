@@ -3,6 +3,9 @@ import ollama
 # Храним историю чатов
 threads = {}
 
+async def load_model():
+    loaded = ollama.chat(model='gemma2:9b', messages=[], keep_alive='10m')
+
 async def talk_to_assistant(thread_id: str, data: str):
     """Функция ведет историю чата в рамках одного thread_id."""
     
@@ -18,7 +21,7 @@ async def talk_to_assistant(thread_id: str, data: str):
     threads[thread_id].append({'role': 'user', 'content': str(data)})
 
     # Запрашиваем у Ollama ответ с учетом всей истории
-    response = ollama.chat(model='gemma2:9b', messages=threads[thread_id])
+    response = ollama.chat(model='gemma2:9b', messages=threads[thread_id], keep_alive='10m')
 
     # Добавляем ответ ассистента в историю
     threads[thread_id].append({'role': 'assistant', 'content': response['message']['content']})
