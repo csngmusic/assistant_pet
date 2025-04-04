@@ -4,8 +4,6 @@
 *.png
 *.pem
 
-config.py
-
 files/
 store/
 .venv/
