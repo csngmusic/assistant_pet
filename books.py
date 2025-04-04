@@ -2,6 +2,7 @@ import chromadb
 import json
 import os
 import ollama
+from config import *
 
 # Инициализация ChromaDB
 chroma_client = chromadb.PersistentClient(path="chroma_db")
@@ -41,5 +42,5 @@ def search_in_docs(query):
     На основе этих данных, сформулируй понятный ответ для студента.
     """
 
-    response = ollama.chat(model="gemma:2b", messages=[{"role": "user", "content": prompt}])
+    response = ollama.chat(model=model, messages=[{"role": "user", "content": prompt}])
     return response["message"]["content"]
