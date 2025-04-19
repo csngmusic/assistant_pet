@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Регистрация</title>
+    </head>
+
+    <body>
+        <form action="login.html" method="get">
+            <div class="input-box animation" style="--i:1; --j:22">
+                <input type="text" required>
+                <label for="">Имя пользователя</label>
+                <i class="bx bxs-user"></i>
+            </div>
+            <div class="input-box animation" style="--i:2; --j:23">
+                <input type="password" required>
+                <label for="">Пароль</label>
+                <i class="bx bxs-lock-alt"></i>
+            </div>
+            <div class="input-box animation" style="--i:3; --j:24">
+                <input type="password" required>
+                <label for="">Повторите пароль</label>
+                <i class="bx bxs-lock-alt"></i>
+            </div>
+            <button type="submit" class="btn animation" style="--i:4; --j:25">Зарегистрироваться</button>
+            <div class="linkTxt animation" style="--i:5; --j:26">
+                <p>Уже есть аккаунт?<a href="login.html" class="register-link">Войти</a></p>
+            </div>
+        </form>
+        <script>
+            document.querySelector("form").addEventListener("submit", function(event) {
+                const username = document.querySelector("input[type='text']").value;
+                const password = document.querySelectorAll("input[type='password']")[0].value;
+                const repeatPassword = document.querySelectorAll("input[type='password']")[1].value;
+        
+                if (password !== repeatPassword) {
+                    event.preventDefault(); 
+                    alert("Пароли не совпадают!");
+                    return;
+                }
+        
+                if (password.length < 6) {
+                    event.preventDefault(); 
+                    alert("Пароль должен содержать минимум 6 символов");
+                    return;
+                }
+        
+                localStorage.setItem("username", username);
+                localStorage.setItem("password", password);
+        
+                event.preventDefault();
+                window.location.href = "messenger.html";
+            });
+        </script>
+    </body>
+</html>

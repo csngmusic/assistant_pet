@@ -16,6 +16,7 @@ html, body {
 .messenger {
     width: 100%;
     max-width: 100%;
+    height: 99%;
     border: 1px solid #ccc;
     border-radius: 10px;
     background: white;
@@ -56,7 +57,7 @@ html, body {
 .input-area {
     display: flex;
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     background: #eee;
 }
 
@@ -102,5 +103,5 @@ button:hover {
 
 .message-form {
     display: flex;
-    width: 100%;
+    width: 99%;
 }

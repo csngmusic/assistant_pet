@@ -1,0 +1,70 @@
+<!-- <!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Вход</title>
+    </head>
+
+    <body>
+        <div class="registration">
+            <div class="header">Авторизация</div>
+            <div class="registration-box">
+
+            </div>
+        </div>
+    </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Авторизация</title>
+    </head>
+
+    <body>
+        <form action="#" method="get">
+            <div class="input-box animation" style="--i:1; --j:22">
+                <input type="text" required>
+                <label for="">Имя пользователя</label>
+                <i class="bx bxs-user"></i>
+            </div>
+            <div class="input-box animation" style="--i:2; --j:23">
+                <input type="password" required>
+                <label for="">Пароль</label>
+                <i class="bx bxs-lock-alt"></i>
+            </div>
+            <button type="submit" class="btn animation" style="--i:3; --j:24">Войти</button>
+            <div class="linkTxt animation" style="--i:4; --j:25">
+                <p>Ещё не зарегистрированы?<a href="registration.html" class="register-link">Зарегистрироваться</a></p>
+            </div>
+        </form>
+    </body>
+    <script>
+        document.querySelector("form").addEventListener("submit", function(event) {
+            const username = document.querySelectorAll("input[type='text']")[0].value;
+            const password = document.querySelectorAll("input[type='password']")[0].value;
+    
+            if (username === "" || password === "") {
+                event.preventDefault();
+                alert("Пожалуйста, заполните все поля.");
+                return;
+            }
+    
+            const savedUsername = localStorage.getItem("username");
+            const savedPassword = localStorage.getItem("password");
+    
+            if (username !== savedUsername || password !== savedPassword) {
+                event.preventDefault();
+                alert("Неверное имя пользователя или пароль.");
+                return;
+            }
+    
+            event.preventDefault();
+            window.location.href = "messenger.html";
+            
+        });
+    </script>
+</html>
