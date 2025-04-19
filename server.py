@@ -22,7 +22,7 @@ async def serve_homepage(request: Request):
     session_id = str(uuid.uuid4())  # Генерируем новый UUID
     response = FileResponse("static/index.html")
     response.set_cookie(key="session_id", value=session_id, httponly=False) # UUID -> куки
-    await load_model(session_id)
+    await load_model()
     return response
 
 # API для обработки запросов студентов
