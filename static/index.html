@@ -6,14 +6,16 @@
     <title>Мессенджер</title>
     <link rel="stylesheet" href="static/styles.css"/>
 </head>
-<body>
 
+<body>
 <div class="messenger">
     <div class="header">Чат</div>
     <div class="chat-box" id="chat-box"></div>
     <div class="input-area">
-        <input type="text" id="message-input" placeholder="Введите сообщение...">
-        <button onclick="sendMessage()">Отправить</button>
+        <form id="message-form" class="message-form">
+            <input type="text" id="message-input" placeholder="Введите сообщение...">
+            <button>Отправить</button>
+        </form>
     </div>
 </div>
 
@@ -61,7 +63,10 @@
         chatBox.prepend(errorMessage);
     }
 }
+document.getElementById("message-form").addEventListener("submit", function(event) {
+    event.preventDefault(); 
+    sendMessage();
+});
 </script>
-
 </body>
 </html>
