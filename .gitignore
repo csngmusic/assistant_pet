@@ -5,6 +5,7 @@
 *.pem
 
 config_db.py
+index_old.html
 
 files/
 store/
