@@ -4,6 +4,8 @@
 *.png
 *.pem
 
+config_db.py
+
 files/
 store/
 .venv/

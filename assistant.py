@@ -1,13 +1,13 @@
 import ollama
 
 from config import *
-
+from connector import run_query
+import queries
 # Храним историю чатов
 threads = {}
 
 async def load_model():
     loaded = ollama.chat(model=model, messages=[], keep_alive='10m')
-
 async def talk_to_assistant(thread_id: str, data: str):
     """Функция ведет историю чата в рамках одного thread_id."""
     
@@ -15,9 +15,10 @@ async def talk_to_assistant(thread_id: str, data: str):
         threads[thread_id] = [
             {
                 'role': 'system',
-                'content': 'Сгенерируй ответ на заданный пользователем запрос'
+                'content': instructions
             }
         ]
+        run_query(queries.insert_session, {'user_id': 1, 'uuid': thread_id, 'mode_id': 1})
 
     # Добавляем сообщение пользователя в историю
     threads[thread_id].append({'role': 'user', 'content': str(data)})
