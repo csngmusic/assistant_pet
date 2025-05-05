@@ -18,3 +18,14 @@ INSERT INTO sessions (user_id, session_uuid, mode_id)
 VALUES
     (:user_id, :uuid, :mode_id)
 """
+
+insert_message = """
+INSERT INTO messages(
+    session_id, role, message_text)
+    VALUES (
+        (SELECT session_id
+        FROM sessions
+        WHERE session_uuid = :uuid),
+        :role,
+        :message)
+"""
