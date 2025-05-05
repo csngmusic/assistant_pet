@@ -52,7 +52,7 @@
 
         const botMessage = document.createElement("div");
         botMessage.classList.add("message", "bot");
-        botMessage.innerHTML = data.answer || "Ответ пуст.";
+        botMessage.innerText = data.answer || "Ответ пуст.";
         chatBox.prepend(botMessage);
     } catch (error) {
         chatBox.removeChild(loading);
