@@ -1,4 +1,5 @@
 import ollama
+import markdown
 
 from config import *
 from connector import run_query
@@ -30,5 +31,6 @@ async def talk_to_assistant(thread_id: str, data: str):
     # Добавляем ответ ассистента в историю
     threads[thread_id].append({'role': 'assistant', 'content': response['message']['content']})
     run_query(queries.insert_message, {'uuid': thread_id, 'role': 2, 'message': response['message']['content']})
-    
-    return response['message']['content']
+
+    html_answer = markdown.markdown(response['message']['content'])
+    return html_answer
