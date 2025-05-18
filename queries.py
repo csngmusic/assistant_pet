@@ -29,3 +29,23 @@ INSERT INTO messages(
         :role,
         :message)
 """
+
+insert_lit = """
+INSERT INTO literature (
+    mode_id, name)
+    VALUES (
+        :mode_id, 
+        :name)
+"""
+
+insert_lit_content = """
+INSERT INTO literature_contents (
+    literature_id, page_number, text, embedding)
+    VALUES (
+        (SELECT id
+        FROM literature
+        WHERE name = :name), 
+        :page_number, 
+        :text, 
+        :embedding)
+"""
