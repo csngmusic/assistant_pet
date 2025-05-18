@@ -22,11 +22,13 @@ async def talk_to_assistant(thread_id: str, data: str):
 
     # Добавляем сообщение пользователя в историю
     threads[thread_id].append({'role': 'user', 'content': str(data)})
+    run_query(queries.insert_message, {'uuid': thread_id, 'role': 1, 'message': str(data)})
 
     # Запрашиваем у Ollama ответ с учетом всей истории
     response = ollama.chat(model=model, messages=threads[thread_id], keep_alive='10m')
 
     # Добавляем ответ ассистента в историю
     threads[thread_id].append({'role': 'assistant', 'content': response['message']['content']})
-
+    run_query(queries.insert_message, {'uuid': thread_id, 'role': 2, 'message': response['message']['content']})
+    
     return response['message']['content']
