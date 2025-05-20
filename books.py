@@ -1,3 +1,4 @@
+import os
 from pdf2image import convert_from_path
 import cv2
 import numpy as np
@@ -7,8 +8,14 @@ from sentence_transformers import SentenceTransformer
 from config import *
 from connector import run_query
 import queries
+import PyPDF2
 
 pytesseract.pytesseract.tesseract_cmd = tess_path
+
+transformer = SentenceTransformer('cointegrated/rubert-tiny2')
+
+def get_embedding(text: str):
+    return transformer.encode(text).tolist()
 
 def order_points(pts):
     rect = np.zeros((4, 2), dtype="float32")
@@ -19,6 +26,7 @@ def order_points(pts):
     rect[1] = pts[np.argmin(diff)]
     rect[3] = pts[np.argmax(diff)]
     return rect
+
 
 def four_point_transform(image, pts):
     rect = order_points(pts)
@@ -33,6 +41,7 @@ def four_point_transform(image, pts):
     M = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
     return warped
+
 
 def find_page_contour(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -53,6 +62,7 @@ def find_page_contour(img):
                 page_contour = approx
                 max_area = area
     return page_contour
+
 
 def find_vertical_split_line(warped):
     gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
@@ -76,22 +86,22 @@ def find_vertical_split_line(warped):
     x_split = (best_line[0] + best_line[2]) // 2
     return x_split
 
+
 def preprocess_image(image):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     return binary
 
+
 def extract_text_from_scanned_pages(pdf_path):
     images = convert_from_path(pdf_path, dpi=300, poppler_path=poppler_path)
     results = []
     for i, pil_img in enumerate(images, 1):
-        print(f"Processing page {i}...")
         img = np.array(pil_img)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
         page_contour = find_page_contour(img)
         if page_contour is None:
-            print("Page contour not found, using whole page")
             pages_to_ocr = [img]
         else:
             warped = four_point_transform(img, page_contour.reshape(4, 2))
@@ -119,12 +129,25 @@ def extract_text_from_scanned_pages(pdf_path):
                 ],
                 options={'temperature': 0}
             )
-            print(f"Page {i}, part {j} text:")
-            print(response['message']['content'])
             results.append(response['message']['content'])
     return results
 
-def chunk_text(text, max_tokens=256):
+
+def parse_pages(pdf_path):
+    file_obj = open(pdf_path, 'rb')
+    pdfReader = PyPDF2.PdfReader(file_obj)
+
+    text = []
+    for page in pdfReader.pages:
+        item = page.extract_text()
+        item = item.replace('\n', '')
+        text.append(item)
+
+    file_obj.close()
+    return text
+
+
+def chunk_text(text, max_tokens=128):
     import nltk
     nltk.download('punkt', quiet=True)
     nltk.download('punkt_tab', quiet=True)
@@ -151,13 +174,24 @@ def chunk_text(text, max_tokens=256):
         texts_split.append(chunks)
     return texts_split
 
+
 def insert_processes(texts_split, name, mode_id):
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    def get_embedding(text: str):
-        return model.encode(text).tolist()
-    
     run_query(queries.insert_lit, {'mode_id': mode_id, 'name': name})
     for i in range(len(texts_split)):
         for chunk in texts_split[i]:
             embedding = get_embedding(chunk)
             run_query(queries.insert_lit_content, {'name': name, 'page_number': i+1, 'text': chunk, 'embedding': embedding})
+
+
+def parse_text_LLM_check(pdf_path, mode_id):
+    text = extract_text_from_scanned_pages(pdf_path)
+    texts_split = chunk_text(text)
+    name = os.path.basename(pdf_path)
+    insert_processes(texts_split, name, mode_id)
+
+
+def parse_text(pdf_path, mode_id):
+    text = parse_pages(pdf_path)
+    texts_split = chunk_text(text)
+    name = os.path.basename(pdf_path)
+    insert_processes(texts_split, name, mode_id)

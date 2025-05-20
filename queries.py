@@ -1,18 +1,3 @@
-get_roles = """
-SELECT * FROM roles;
-"""
-
-get_role_by_name = """
-SELECT * FROM roles WHERE role_name = :role_name;
-"""
-
-
-update_role_desc = """
-UPDATE roles
-SET role_desc = :role_desc
-WHERE role_name = :role_name;
-"""
-
 insert_session = """
 INSERT INTO sessions (user_id, session_uuid, mode_id)
 VALUES
@@ -48,4 +33,27 @@ INSERT INTO literature_contents (
         :page_number, 
         :text, 
         :embedding)
+"""
+
+select_lit_id = """
+SELECT lc.id, text
+FROM literature_contents lc
+left join literature l on l.id = lc.literature_id
+"""
+
+update_embedding = """
+UPDATE literature_contents
+SET embedding = :embedding
+WHERE id = :id;
+"""
+
+select_sources = """
+SELECT l.name,
+       lc.text
+FROM literature_contents lc
+LEFT JOIN literature l ON l.id = lc.literature_id
+WHERE (lc.embedding <#> :emb) < 0.6 -- фильтрация по косинусному расстоянию
+ORDER BY lc.embedding <#> :emb
+LIMIT 20
+)
 """
