@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from fastapi.responses import FileResponse, JSONResponse
 import uuid
 
-from assistant import load_model, talk_to_assistant
+from assistant import *
 
 # Инициализация FastAPI
 app = FastAPI()
@@ -25,13 +25,23 @@ async def serve_homepage(request: Request):
     await load_model()
     return response
 
-# API для обработки запросов студентов
+# API для обработки запросов к модели
 @app.post("/search/")
 async def search_question(query: QueryModel, request: Request, session_id: str = Cookie(None)):
     if not session_id:
         session_id = str(uuid.uuid4())  # Генерируем новый, если нет
     try:
         answer = await talk_to_assistant(session_id, query.question)
+    except Exception as e:
+        answer = str(e)
+    return {"answer": answer}
+
+@app.post("/search_literature")
+async def search_literature(query: QueryModel, request: Request, session_id: str = Cookie(None)):
+    if not session_id:
+        session_id = str(uuid.uuid4())  # Генерируем новый, если нет
+    try:
+        answer = await ask_question(session_id, query.question)
     except Exception as e:
         answer = str(e)
     return {"answer": answer}

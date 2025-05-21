@@ -8,6 +8,14 @@
 </head>
 
 <body>
+<div class="mode-selector">
+    <label>
+        <input type="radio" name="mode" value="search" checked> Без литературы
+    </label>
+    <label>
+        <input type="radio" name="mode" value="search_literature"> С литературой
+    </label>
+</div>
 <div class="messenger">
     <div class="header">Чат</div>
     <div class="chat-box" id="chat-box"></div>
@@ -20,53 +28,69 @@
 </div>
 
 <script>
-    const apiUrl = `${window.location.protocol}//${window.location.hostname}:8080/search/`;
+    let selectedMode = null;  // Будет зафиксирован при первом сообщении
 
     async function sendMessage() {
-    const input = document.getElementById("message-input");
-    const chatBox = document.getElementById("chat-box");
-
-    const question = input.value.trim();
-    if (question === "") return;
-
-    input.value = "";
-
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message", "user");
-    messageElement.innerText = question;
-    chatBox.prepend(messageElement);
-
-    const loading = document.createElement("div");
-    loading.classList.add("message", "bot");
-    loading.innerText = "Ассистент печатает...";
-    chatBox.prepend(loading);
-
-    try {
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question: question })
-        });
-        const data = await response.json();
-        chatBox.removeChild(loading);
-
-        const botMessage = document.createElement("div");
-        botMessage.classList.add("message", "bot");
-        botMessage.innerText = data.answer || "Ответ пуст.";
-        chatBox.prepend(botMessage);
-    } catch (error) {
-        chatBox.removeChild(loading);
-
-        const errorMessage = document.createElement("div");
-        errorMessage.classList.add("message", "bot");
-        errorMessage.innerText = "Ошибка при получении ответа от сервера.";
-        chatBox.prepend(errorMessage);
+        const input = document.getElementById("message-input");
+        const chatBox = document.getElementById("chat-box");
+    
+        const question = input.value.trim();
+        if (question === "") return;
+    
+        // Фиксируем режим при первом сообщении
+        if (!selectedMode) {
+            const modeInput = document.querySelector('input[name="mode"]:checked');
+            if (!modeInput) {
+                alert("Выберите режим чата перед началом общения.");
+                return;
+            }
+            selectedMode = modeInput.value;
+    
+            // Отключаем переключение режима
+            document.querySelectorAll('input[name="mode"]').forEach(input => input.disabled = true);
+        }
+    
+        const apiUrl = `${window.location.protocol}//${window.location.hostname}:8080/${selectedMode}`;
+    
+        input.value = "";
+    
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message", "user");
+        messageElement.innerText = question;
+        chatBox.prepend(messageElement);
+    
+        const loading = document.createElement("div");
+        loading.classList.add("message", "bot");
+        loading.innerText = "Ассистент печатает...";
+        chatBox.prepend(loading);
+    
+        try {
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: question })
+            });
+            const data = await response.json();
+            chatBox.removeChild(loading);
+    
+            const botMessage = document.createElement("div");
+            botMessage.classList.add("message", "bot");
+            botMessage.innerText = data.answer || "Ответ пуст.";
+            chatBox.prepend(botMessage);
+        } catch (error) {
+            chatBox.removeChild(loading);
+    
+            const errorMessage = document.createElement("div");
+            errorMessage.classList.add("message", "bot");
+            errorMessage.innerText = "Ошибка при получении ответа от сервера.";
+            chatBox.prepend(errorMessage);
+        }
     }
-}
-document.getElementById("message-form").addEventListener("submit", function(event) {
-    event.preventDefault(); 
-    sendMessage();
-});
-</script>
+    
+    document.getElementById("message-form").addEventListener("submit", function(event) {
+        event.preventDefault(); 
+        sendMessage();
+    });
+    </script>
 </body>
 </html>
