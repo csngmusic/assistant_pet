@@ -175,23 +175,23 @@ def chunk_text(text, max_tokens=128):
     return texts_split
 
 
-def insert_processes(texts_split, name, mode_id):
-    run_query(queries.insert_lit, {'mode_id': mode_id, 'name': name})
+def insert_processes(texts_split, name):
+    run_query(queries.insert_lit, {'name': name})
     for i in range(len(texts_split)):
         for chunk in texts_split[i]:
             embedding = get_embedding(chunk)
             run_query(queries.insert_lit_content, {'name': name, 'page_number': i+1, 'text': chunk, 'embedding': embedding})
 
 
-def parse_text_LLM_check(pdf_path, mode_id):
+def parse_text_LLM_check(pdf_path):
     text = extract_text_from_scanned_pages(pdf_path)
     texts_split = chunk_text(text)
     name = os.path.basename(pdf_path)
-    insert_processes(texts_split, name, mode_id)
+    insert_processes(texts_split, name)
 
 
-def parse_text(pdf_path, mode_id):
+def parse_text(pdf_path):
     text = parse_pages(pdf_path)
     texts_split = chunk_text(text)
     name = os.path.basename(pdf_path)
-    insert_processes(texts_split, name, mode_id)
+    insert_processes(texts_split, name)

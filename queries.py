@@ -17,9 +17,8 @@ INSERT INTO messages(
 
 insert_lit = """
 INSERT INTO literature (
-    mode_id, name)
-    VALUES (
-        :mode_id, 
+    name)
+    VALUES ( 
         :name)
 """
 
@@ -55,5 +54,4 @@ LEFT JOIN literature l ON l.id = lc.literature_id
 WHERE (lc.embedding <#> :emb) < 0.6 -- фильтрация по косинусному расстоянию
 ORDER BY lc.embedding <#> :emb
 LIMIT 20
-)
 """

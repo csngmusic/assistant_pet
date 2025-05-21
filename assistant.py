@@ -62,13 +62,14 @@ async def ask_question(thread_id: str, data: str):
     )
 
     # Строим новый список сообщений: инструкции, контекст, вопрос
-    threads[thread_id].append({"role": "system", "content": f"Вот выдержки из книг, которые могут тебе пригодиться:\n\n{context}"})
-    threads[thread_id].append({'role': 'user', 'content': str(data)})
+    messages = [{'role': 'system', 'content': helper_instructions},
+                {"role": "system", "content": f"Вот выдержки из книг, которые могут тебе пригодиться:\n\n{context}"},
+                {'role': 'user', 'content': str(data)}]
 
     # Получаем ответ от модели
     response = ollama.chat(
         model=model,
-        messages=threads[thread_id],
+        messages=messages,
         keep_alive='10m',
         options={"temperature": 0.2}
     )
