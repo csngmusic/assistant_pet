@@ -51,7 +51,6 @@ SELECT l.name,
        lc.text
 FROM literature_contents lc
 LEFT JOIN literature l ON l.id = lc.literature_id
-WHERE (lc.embedding <#> :emb) < 0.6 -- фильтрация по косинусному расстоянию
-ORDER BY lc.embedding <#> :emb
-LIMIT 20
+WHERE (lc.embedding <=> :emb) < 0.42 -- фильтрация по косинусному расстоянию
+ORDER BY lc.embedding <=> :emb
 """
