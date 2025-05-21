@@ -57,13 +57,12 @@ async def ask_question(thread_id: str, data: str):
 
     # Формируем контекст из источников
     context = "\n\n".join(
-        f"[Источник: {row['name']}: {row['text']}]"
+        f"[Источник: {row['name']}] {row['text']}"
         for row in sources
     )
 
     # Строим новый список сообщений: инструкции, контекст, вопрос
-    messages = [{'role': 'system', 'content': helper_instructions},
-                {"role": "system", "content": f"Вот выдержки из книг, которые могут тебе пригодиться:\n\n{context}"},
+    messages = [{'role': 'system', 'content': f'{helper_instructions}\n\nВот выдержки из книг, которые могут тебе пригодиться:\n\n{context}'},
                 {'role': 'user', 'content': str(data)}]
 
     # Получаем ответ от модели
@@ -71,7 +70,7 @@ async def ask_question(thread_id: str, data: str):
         model=model,
         messages=messages,
         keep_alive='10m',
-        options={"temperature": 0.2}
+        options={"temperature": 0.1}
     )
 
     # Сохраняем ответ в истории
