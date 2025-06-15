@@ -70,7 +70,7 @@ async def ask_question(thread_id: str, data: str):
         model=model,
         messages=messages,
         keep_alive='10m',
-        options={"temperature": 0.1}
+        options={"temperature": 0.5}
     )
 
     # Сохраняем ответ в истории
