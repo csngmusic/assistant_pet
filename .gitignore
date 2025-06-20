@@ -11,3 +11,4 @@ files/
 store/
 .venv/
 __pycache__/
+models/
