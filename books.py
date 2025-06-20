@@ -12,7 +12,13 @@ import PyPDF2
 
 pytesseract.pytesseract.tesseract_cmd = tess_path
 
-transformer = SentenceTransformer('cointegrated/rubert-tiny2')
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "rubert-tiny2")
+
+if not os.path.exists(MODEL_PATH):
+    os.makedirs(MODEL_PATH, exist_ok=True)
+    SentenceTransformer("cointegrated/rubert-tiny2").save(MODEL_PATH)
+
+transformer = SentenceTransformer(MODEL_PATH)
 
 def get_embedding(text: str):
     return transformer.encode(text).tolist()
