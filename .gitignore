@@ -1,14 +1,9 @@
 *.ipynb
-*.bin
-*.jpg
-*.png
-*.pem
 
 config_db.py
 static/index_old.html
 
 files/
-store/
 .venv/
 __pycache__/
 models/
