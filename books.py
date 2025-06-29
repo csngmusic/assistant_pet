@@ -205,6 +205,7 @@ def parse_text(pdf_path):
 
 if __name__ == "__main__":
     import argparse
+    import sys
 
     parser = argparse.ArgumentParser(description="Parse PDF and insert text with embeddings.")
     parser.add_argument("pdf_path", type=str, help="Path to the PDF file")
@@ -212,7 +213,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.llm:
-        parse_text_LLM_check(args.pdf_path)
-    else:
-        parse_text(args.pdf_path)
+    try:
+        if args.llm:
+            print(f"[INFO] Запуск LLM-парсинга для файла: {args.pdf_path}")
+            parse_text_LLM_check(args.pdf_path)
+        else:
+            print(f"[INFO] Запуск обычного парсинга для файла: {args.pdf_path}")
+            parse_text(args.pdf_path)
+        print("[SUCCESS] Парсинг и добавление в базу данных завершены успешно.")
+    except Exception as e:
+        print(f"[ERROR] Произошла ошибка при обработке файла: {e}", file=sys.stderr)
+        sys.exit(1)
