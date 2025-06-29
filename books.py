@@ -201,3 +201,18 @@ def parse_text(pdf_path):
     texts_split = chunk_text(text)
     name = os.path.basename(pdf_path)
     insert_processes(texts_split, name)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Parse PDF and insert text with embeddings.")
+    parser.add_argument("pdf_path", type=str, help="Path to the PDF file")
+    parser.add_argument("--llm", action="store_true", help="Use OCR + LLM-based parsing instead of PyPDF2")
+
+    args = parser.parse_args()
+
+    if args.llm:
+        parse_text_LLM_check(args.pdf_path)
+    else:
+        parse_text(args.pdf_path)
